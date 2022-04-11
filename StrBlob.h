@@ -1,10 +1,12 @@
-#include <iostream>
 #include <string>
 #include <vector>
+#include "StrBlobPtr.h"
 using namespace std;
-//共享指针shared_ptr和weak_ptr
+//共享指针shared_ptr 伴随类
+class StrBlobPtr;
 class StrBlob{
 public:
+    friend class StrBlobPtr;
     typedef std::vector<std::string>::size_type size_type;
     StrBlob();
     StrBlob(std::initializer_list<std::string> il);
@@ -14,6 +16,12 @@ public:
     void pop_back();
     std::string& front();
     std::string& back();
+    StrBlobPtr begin(){return StrBlobPtr(*this);}
+    StrBlobPtr end()
+        {
+            auto ret = StrBlobPtr(*this, data->size());
+            return ret;
+        }
 private:
     std::shared_ptr<std::vector<std::string>> data;
     void check(size_type i, const std::string &msg) const;
@@ -45,10 +53,4 @@ void StrBlob::pop_back()
 {
     check(0, "pop_back on empty StrBlob");
     data->pop_back();
-}
-
-
-int main(){
-
-    return 0;
 }
